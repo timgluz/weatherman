@@ -5,10 +5,13 @@
   "main": "server.js",
   "author": "Timo Sulg",
   "license": "ISC",
-  "dependencies" : {
-    "restify" : "^4.3.0"
+  "dependencies": {
+    "geo-nearby": "^2.0.1",
+    "level": "^1.5.0",
+    "restify": "^4.3.0"
   },
   "devDependencies": {
+    "split": "1.0.0",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
     "mocha": "^3.2.0"
@@ -17,5 +20,4 @@
     "run": "NODE_ENV=dev node server.js",
     "test": "NODE_ENV=test mocha --timeout 10000"
   }
-
 }
