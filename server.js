@@ -24,13 +24,14 @@ server
   .use(restify.bodyParser())
   .use(restify.fullResponse());
 
-//server.pre(restify.pre.sanitizePath());
+server.pre(restify.pre.sanitizePath()); //remove trailing slashes 
 
 //-- APP routes
 server.get('/cities', controllers.cities.findCities)
 server.get('/cities/:city_id', controllers.cities.getCity)
 server.get('/cities/:city_id/weather', controllers.cities.getWeather);
 
+//-- the entrypoint
 module.exports = server
 var port = process.env.PORT || 3000;
 server.listen(port, function (err) {

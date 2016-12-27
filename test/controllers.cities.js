@@ -38,10 +38,39 @@ describe('Cities endpoints', () => {
           res.should.have.status(200);
           res.body.should.be.a('array');
           res.body.length.should.be.eql(10);
-          done()
+          done();
         });
     });
 
+  });
+
+
+  //-- GET /cities/:cityId routes
+  describe('GET /cities/2873891', () => {
+    it('it should return expected data for the Monnem', (done) => {
+      chai.request(server)
+        .get('/cities/2873891')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.name.should.eql('Mannheim');
+          res.body.id.should.eql(2873891);
+          res.body.lat.should.eql(49.488331);
+          res.body.lng.should.eql(8.46472);
+          done();
+        });
+    });
+
+    it('it should return 400 if cityId is not valid', (done) => {
+      chai.request(server)
+        .get('/cities/11nonsense')
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.code.should.be.eq('BadRequestError');
+          done();
+        });
+    });
   });
 
 });
