@@ -53,7 +53,7 @@ function putOne(cityId, cityData, onSuccess, onError){
 }
 
 function deleteOne(cityId, onSuccess, onError){
-
+  //TODO: finish it
 }
 
 function findClosest(lat, lng, radius = 10, maxN = 10){ 

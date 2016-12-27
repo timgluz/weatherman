@@ -1,14 +1,51 @@
 //export all the functions
 module.exports = { findCities, getCity, getWeather };
 
+const validator = require('validator');
 const City = require('../models/city');
 const WeatherApi = require('../services/openweathermap');
 
-//TODO: catch edge cases
+function validateCoords(lat, lng){
+  let errs = [],
+      lat_ = lat + '', //validator expects string values and way to turn Nan into String
+      lng_ = lng + '';
+
+  if (lat){
+    if(!validator.isFloat(lat_, {min: -90.0, max: 90.0 }) ){
+      errs.push('Latitude('+ lat_ +') must be in the valid range(-90, 90).');
+    }
+  } else {
+    errs.push('Latitude is missing, add the lat param to the url;');
+  } 
+  
+  if(lng){
+    if(!validator.isFloat(lng_, {min: -180.0, max: 180.00})){
+      errs.push('Longitude('+ lng_ +') must be in the valid range(-180,180)');
+    }
+  } else {
+    errs.push('Longitude is missing, add the lng param to the url;')
+  }
+
+  return errs;
+}
 
 function findCities(req, res, next){
-  //TODO: finish
-  let closeCoords = City.findClosest(49.49, 8.5, 50),
+  let lat = req.query['lat'],
+      lng = req.query['lng'],
+      errs = validateCoords(lat, lng);
+  
+  //validate user inputs
+  if(errs.length > 0){
+    console.log("User attached not valid coordinates. " + errs.join('\n'));
+    res.json(400,{
+      'code': "BadRequestError",
+      'message':  errs.join('\n')
+    });
+    return next(errs.join('\n'));
+  }
+
+  //find the IDs of the closest cities
+  let closeCoords = City.findClosest(lat, lng, 10),
       cityIds = closeCoords.map((doc) => { return doc.i; }),
       onResult = (cities) => {
         if(cities.length > 0)
@@ -22,6 +59,7 @@ function findCities(req, res, next){
         res.json(500, {"message": "Failed to request cities"})
       }
 
+  //fetch Cities data by their ids and render response
   City.getMany(cityIds, onResult, onError);
 };
 

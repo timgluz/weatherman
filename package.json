@@ -8,7 +8,8 @@
   "dependencies": {
     "geo-nearby": "^2.0.1",
     "level": "^1.5.0",
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "validator": "^6.2.0"
   },
   "devDependencies": {
     "split": "1.0.0",
