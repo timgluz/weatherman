@@ -3,9 +3,64 @@
 
 Please dockerify the service and add a little test-suite for checking if the service works as expected.
 
-If you have any question, feel free to contact me via phone (+4962133933150) or mail (barth@stocard.de).
-
 Please use git for tracking your progress. For handing the case in, please share a link to a public git repo or use git-bundle (https://git-scm.com/blog/2010/03/10/bundles.html) and share the file with me.
+
+## Usage
+
+#### development
+
+```bash
+# pull NPM dependencies
+npm install
+
+# create geoIndex and initialize datastorage:
+node script/create_index.js
+
+# update configs for development
+vim config/development.json
+	
+# ready to start server
+npm start
+```
+
+#### usign Dockerized version
+
+```
+
+# pull NPM dependencies
+npm install
+
+# create geoIndex and initialize datastorage:
+node script/create_index.js
+
+# update configs for development
+vim config/development.json
+	
+# build docker image
+docker build -t timgluz/weatherman .
+
+# running dockerized app
+# ps: don't forget to update development.json config
+docker run -d -p 3000:3000 -v $(PWD)/config:/usr/src/app/config timgluz/weatherman
+
+```
+
+#### testing
+
+```
+# pull NPM dependencies
+npm install
+
+# create geoIndex and initialize datastorage:
+node script/create_index.js
+
+# update configs for development
+vim config/test.json
+
+# run tests
+npm test
+```
+
 
 ## RoutesThe following routes should be provided by the service. All the routes should deliver the response as json and indicate the response type with the proper content type.### `GET /cities?lat={latitude}&lng={longitude}`List the available cities around the specified latitude/longitude within a radius of 10 kilometers Example: http://localhost:8080/cities?lat=49.48&lng=8.46Returns:
 * `HTTP 200 Ok` with body:
