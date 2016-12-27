@@ -14,7 +14,7 @@ Please use git for tracking your progress. For handing the case in, please share
 npm install
 
 # create geoIndex and initialize datastorage:
-node script/create_index.js
+cd scripts && node create_index.js
 
 # update configs for development
 vim config/development.json
@@ -23,7 +23,7 @@ vim config/development.json
 npm start
 ```
 
-#### usign Dockerized version
+#### Dockerized version
 
 ```
 
@@ -31,7 +31,7 @@ npm start
 npm install
 
 # create geoIndex and initialize datastorage:
-node script/create_index.js
+cd scripts && node create_index.js
 
 # update configs for development
 vim config/development.json
@@ -52,7 +52,7 @@ docker run -d -p 3000:3000 -v $(PWD)/config:/usr/src/app/config timgluz/weatherm
 npm install
 
 # create geoIndex and initialize datastorage:
-node script/create_index.js
+cd scripts && node create_index.js
 
 # update configs for development
 vim config/test.json
