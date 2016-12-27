@@ -73,4 +73,36 @@ describe('Cities endpoints', () => {
     });
   });
 
+
+  //TODO: stub actual API call
+  //-- GET /cities/:cityId/weather routes
+  describe('GET /cities/2873891/weather', () => {
+    it('it should return expected weather info', (done) => {
+      chai.request(server)
+        .get('/cities/2873891/weather')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.all.keys(
+            'type', 'type_description', 'sunrise', 'sunset',
+            'temp', 'temp_min', 'temp_max', 'pressure',
+            'humidity', 'clouds_percent', 'wind_speed'
+          );
+
+          done();
+        });
+    });
+
+    it('it should return 404 if cityID doesnt exist', (done) => {
+      chai.request(server)
+        .get('/cities/22/weather')
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.all.keys('code', 'message');
+          done();
+        });
+    });
+  });
+
 });
