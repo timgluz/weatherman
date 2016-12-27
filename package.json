@@ -6,6 +6,7 @@
   "author": "Timo Sulg",
   "license": "ISC",
   "dependencies": {
+    "config": "^1.24.0",
     "geo-nearby": "^2.0.1",
     "level": "^1.5.0",
     "restify": "^4.3.0",
@@ -18,7 +19,7 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "run": "NODE_ENV=dev node server.js",
+    "run": "NODE_ENV=development node server.js",
     "test": "NODE_ENV=test mocha --timeout 10000"
   }
 }

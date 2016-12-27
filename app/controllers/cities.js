@@ -1,5 +1,5 @@
 //export all the functions
-module.exports = { findCities, getCity, getWeather };
+module.exports = { findCities, getCity, checkCity, fetchWeather };
 
 const validator = require('validator');
 const City = require('../models/city');
@@ -66,13 +66,70 @@ function getCity(req, res, next){
   );
 };
 
-function getWeather(req, res, next){
-  let onSuccess = (weatherInfo) => {res.json(weatherInfo);},
-      onError   = (err) => { res.json({'message' : "Got no info: " + err }) };
+//TODO: check does the city exists
+//TODO: cache results for 1hour as it doesnt change so often
+function checkCity(req, res, next){
+  let cityId  = req.params.city_id,
+      errs    = validateCityId(cityId);
 
-  WeatherApi.fetchByCityId('2814469', onSuccess, onError);
+  //validate user input
+  if(errs.length > 0){
+    res.json(400, {
+      code: 'BadRequestError',
+      message: errs.join('\n')
+    });
+    return next(errs.join('\n'));
+  }
+ 
+   //fetch city details and render response
+  City.getOne(
+    cityId,
+    (theCity) => {next()}, //TODO: fix double encode-decode as DB val already in JSON
+    (err) => {
+      res.json(404, {
+        "code": "NotFoundError",
+        "message": "not found"
+      });
+    }
+  );
 };
 
+//TODO: research how to pipeline getWeather and fetchWeatherDetails together
+function fetchWeather(req, res, next){
+  let cityId  = req.params.city_id,
+      transformResult = (weatherInfo) =>{
+        if(!weatherInfo){ return {}} //empty result
+        //TODO: check does document has valid structure
+        
+        let sunrise_dt = new Date(1000 * weatherInfo.sys.sunrise),
+            sunset_dt  = new Date(1000 * weatherInfo.sys.sunset); 
+        return {
+          'type'            : weatherInfo.weather[0].main,
+          'type_description': weatherInfo.weather[0].description,
+          'sunrise'         : sunrise_dt.toISOString(),
+          'sunset'          : sunset_dt.toISOString(),
+          'temp'            : weatherInfo.main.temp,
+          'temp_min'        : weatherInfo.main.temp_min,
+          'temp_max'        : weatherInfo.main.temp_max,
+          'pressure'        : weatherInfo.main.pressure,
+          'humidity'        : weatherInfo.main.humidity,
+          'clouds_percent'  : weatherInfo.clouds.all,
+          'wind_speed'      : weatherInfo.wind.speed
+        };
+      },
+      onSuccess = (weatherInfo) => {
+        res.json(transformResult(weatherInfo));
+      },
+      onError   = (err) => {
+        res.json({
+          code: 'IntegrationError',
+          message : "Got no info: " + err
+        });
+      };
+
+  WeatherApi.fetchByCityId(cityId, onSuccess, onError);
+
+}
 
 //-- VALIDATORS ---------------------------------------------------------------
 function validateCoords(lat, lng){
