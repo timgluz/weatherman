@@ -2,7 +2,6 @@ const fs = require('fs');
 const split = require('split'); 
 const console = require('console');
 const Geo = require('geo-nearby');
-const City  = require('../app/models/city');
 
 const citiesPath = '../resources/city.list.json';
 const indexPath  = '../resources/city.compact.json';
@@ -14,8 +13,22 @@ createIndex(citiesPath, indexPath);
 function createIndex(citiesFilePath, targetFilePath){
   let coords = [],
       expectedLines = 209579, // wc -l resources/city.list.json
-      totalLines = 0;
- 
+      totalLines = 0,
+      dbDir = '../data/weatherman_db';
+
+  //create DB folder if it still doesnt exist
+  if (!fs.existsSync(dbDir)){
+    fs.mkdirSync('../data');
+    fs.mkdirSync(dbDir);
+    console.log('Created folder for weathermanDB' + dbDir);
+  }
+
+  //delay importing as DB may not exists at the beginning
+  const City  = require('../app/models/city');
+
+
+  //create sorted optimized geoIndex and save city data into levelDB
+  //from new-line separated JSON stream
   fs.createReadStream(citiesFilePath)
     .pipe(split(JSON.parse))
     .on('data', (theCity) => {
