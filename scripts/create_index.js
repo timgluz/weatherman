@@ -57,7 +57,7 @@ function createIndex(citiesFilePath, targetFilePath){
     })
     .on('close', () => {
       //save coordinates as compacted GeoIndex
-      Geo.createCompactSet(coords, { file: targetFilePath });
+      Geo.createCompactSet(coords, { file: targetFilePath, sort: true });
       console.log(
         "Done! Processed " + totalLines + "items and saved results " +
         targetFilePath

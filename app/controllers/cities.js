@@ -21,16 +21,23 @@ function findCities(req, res, next){
   }
 
   //find the IDs of the closest cities
-  let closeCoords = City.findClosest(lat, lng, 10),
+  let closeCoords = City.findClosest(lat, lng),
       cityIds = closeCoords.map((doc) => { return doc.i; }),
+      targetPoint = {lat: lat, lng: lng},
       onResult = (cities) => {
-        if(cities.length > 0)
-          res.json(cities);
-        else
+        if(cities.length > 0){
+          //HACK: there's better solution when more accuracy is required
+          //it's mandatory to sort result after query for 2 reason:
+          //geo-nearby has bug with accuracy
+          //getMany is async and items are put onto list out of order
+          res.json(City.sortLocations(targetPoint, cities));
+
+        } else {
           res.json(404, {
             'code'    : "NotFoundError",
             "message" : "Found no cities"
           });
+        }
       },
       onError = (err) => {
         res.json(500, {"message": "Failed to request cities"})
