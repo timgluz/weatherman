@@ -56,8 +56,11 @@ function deleteOne(cityId, onSuccess, onError){
   //TODO: finish it
 }
 
-function findClosest(lat, lng, radius = 10, maxN = 10){ 
-  return geo.limit(maxN).nearBy(lat, lng, radius * 1000);
+function findClosest(lat, lng, radius = 10, maxN = 10){
+  let accuracy = 7, //7th decimal up to 11mm
+      lat_ = (lat).toFixed(accuracy),
+      lng_ = (lat).toFixed(accuracy);
+  return geo.limit(maxN).nearBy(lat_, lng_, radius * 1000);
 }
 
 function loadIndex(){
